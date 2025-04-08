@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/github/callback"
+  callbackURL: process.env.CALLBACK_URL || "https://test-3x2s.onrender.com/auth/github/callback",  // ใช้ process.env สำหรับการตั้งค่า callback URL
 },
   (accessToken, refreshToken, profile, done) => {
     return done(null, profile);
@@ -31,7 +31,8 @@ passport.deserializeUser((user, done) => {
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: process.env.NODE_ENV === 'production' }  // ตั้งค่า secure สำหรับโปรดักชัน
 }));
 
 // ใช้ Passport สำหรับการ authenticate
@@ -65,7 +66,7 @@ app.get('/search', (req, res) => {
 });
 
 // Route สำหรับ logout
-app.get('/logout', (req, res) => {
+app.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) { return next(err); }
     res.redirect('/');
