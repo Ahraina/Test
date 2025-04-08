@@ -32,7 +32,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' }  // ตั้งค่า secure สำหรับโปรดักชัน
+  cookie: { secure: true } 
 }));
 
 // ใช้ Passport สำหรับการ authenticate
